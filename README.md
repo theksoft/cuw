@@ -1,2 +1,1 @@
-# hlcuw
-High-level CUnit wrapper
+# HLCUW - High-level CUnit wrapper
