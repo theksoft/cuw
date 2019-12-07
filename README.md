@@ -86,5 +86,5 @@ In the main test application <main.c>, define the test suite table and use it th
       tCuwContext c;
       if (0 != (e = cuwGetContext(&c, argc, argv)))
         return (1 == e) ? EXIT_SUCCESS : EXIT_FAILURE;
-      return (!cuwProcess(&c, <testSuites>)) ? EXIT_FAILURE : EXIT_SUCCESS;
+      return (!cuwProcess(&c, <testSuites>, NULL)) ? EXIT_FAILURE : EXIT_SUCCESS;
     }

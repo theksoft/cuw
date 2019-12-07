@@ -36,11 +36,13 @@ static tCuwSuiteGetter tests[] = { getTS1, getTS2, CUW_SUITE_END };
 // Interactive console not tested automatically as it requires ... interaction
 static int processBasicMode(void);
 static int processAutomatedMode(void);
+static int processPostProcess(void);
 
 tCuwUTest* getTestsSuite(void) {
   static tCuwUTest s[] = {
     { "Check basic mode entry (N/A)", processBasicMode },
     { "Check automated mode entry", processAutomatedMode },
+    { "Check post-processing (automated)", processPostProcess },
     { NULL, NULL }
   };
   return s;
@@ -66,7 +68,7 @@ tCuwUTest* getTestsSuite(void) {
 
 static void processBasicModeTest(void) {
   tCuwContext c = { .mode = CUW_MODE_BASIC, .bm = CU_BRM_VERBOSE };
-  if (!cuwProcess(&c, tests)) {
+  if (!cuwProcess(&c, tests, NULL)) {
     fprintf(stderr, "ERROR executing predefined tests\n");
     fprintf(stdout, ".\n");   // For comparison to fail
   }
@@ -93,7 +95,32 @@ static int checkTestFile(const char *fn);
 static int processAutomatedMode(void) {
   int rtn = 1;
   tCuwContext c = { .mode = CUW_MODE_AUTOMATED, .filename = CUW_TEST_ROOT };
-  if (!cuwProcess(&c, tests)) {
+  if (!cuwProcess(&c, tests, NULL)) {
+    fprintf(stderr, "ERROR executing predefined tests\n");
+    rtn = 0;
+  }
+  if (!checkTestFile(CUW_TEST_FN)) {
+    fprintf(stderr, "ERROR incorrect expected test file\n");
+    rtn = 0;
+  }
+  return rtn;
+}
+
+/* AUTOMATED MODE with POST-PROCESSING
+ *------------------------------------------------------------------------------------------------*/
+
+static void postProcess(const tCuwContext *context) {
+  (void)context;
+  if (1 != CU_get_number_of_tests_failed())
+    fprintf(stderr, "Warning: Unexpected number of test failed (%d)\n", CU_get_number_of_tests_failed());
+  if (1 != CU_get_number_of_failures())
+    fprintf(stderr, "Warning: Unexpected number of failures (%d)\n", CU_get_number_of_failures());
+}
+
+static int processPostProcess(void) {
+  int rtn = 1;
+  tCuwContext c = { .mode = CUW_MODE_AUTOMATED, .filename = CUW_TEST_ROOT };
+  if (!cuwProcess(&c, tests, postProcess)) {
     fprintf(stderr, "ERROR executing predefined tests\n");
     rtn = 0;
   }
@@ -189,7 +216,7 @@ static tCuwSuite *getTS2() {
     "          <CUNIT_RUN_TEST_FAILURE> \n" \
     "            <TEST_NAME> TS#1 - Test #1 </TEST_NAME> \n" \
     "            <FILE_NAME> test/cuw-test-tests.c </FILE_NAME> \n" \
-    "            <LINE_NUMBER> 123 </LINE_NUMBER> \n" \
+    "            <LINE_NUMBER> 150 </LINE_NUMBER> \n" \
     "            <CONDITION> 3 == myAddition(2, 2) </CONDITION> \n" \
     "          </CUNIT_RUN_TEST_FAILURE> \n" \
     "        </CUNIT_RUN_TEST_RECORD> \n" \

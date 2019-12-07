@@ -42,7 +42,11 @@ int cuwGetContext(tCuwContext *context, int argc, char *argv[]) {
   return 0;
 }
 
-int cuwProcess(const tCuwContext* context, const tCuwSuiteGetter getters[]) {
+int cuwProcess(
+  const tCuwContext* context,
+  const tCuwSuiteGetter getters[],
+  const tCuwPostProcess postProcess
+) {
   if (!context || !getters) return 0;
   if (!cuwInitializeRegistry()) {
     fprintf(stderr, "ERROR(%d) %s\n", cuwGetError(), cuwGetErrorMessage());
@@ -53,6 +57,8 @@ int cuwProcess(const tCuwContext* context, const tCuwSuiteGetter getters[]) {
     fprintf(stderr, "ERROR(%d) %s\n", cuwGetError(), cuwGetErrorMessage());
     return 0;
   }
+  if (postProcess)
+    (*postProcess)(context);
   cuwCleanupRegistry();
   return 1;
 }

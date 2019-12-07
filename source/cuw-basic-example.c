@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
   tCuwContext c;
   if (0 != (e = cuwGetContext(&c, argc, argv)))
     return (1 == e) ? EXIT_SUCCESS : EXIT_FAILURE;
-  if (!cuwProcess(&c, tests))
+  if (!cuwProcess(&c, tests, NULL))
     return EXIT_FAILURE;
   return EXIT_SUCCESS;
 }

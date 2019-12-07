@@ -122,6 +122,14 @@ typedef tCuwSuite* (*tCuwSuiteGetter)(void);
 /** tCuwSuiteGetter table ender. */
 #define CUW_SUITE_END     ((tCuwSuiteGetter)0)
 
+/** Procedure type used for CUnit post-processing.
+  This function takes CUnit wrapper context as argument. @n
+  Refer to <a href="http://cunit.sourceforge.net/doc/running_tests.html">CUnit</a> for
+  the list of CUnit interfaces that can be used to inspect test results after test execution.
+  @see cuwProcess.
+*/
+typedef void (*tCuwPostProcess)(const tCuwContext* context);
+
 /* Basic wrapping
  ------------------------------------------------------------------------------------------------ */
 
@@ -143,11 +151,20 @@ int cuwGetContext(tCuwContext *context, int argc, char *argv[]);
     @param[in] getters
     Table of test suite getters for retrieving all tests suites.
     The last element of this table must be ::CUW_SUITE_END to indicate the end of the table.
+    @param[in] postProcess
+    Post-processing procedure called after tests execution but before test registry cleanup.
+    This parameter can be @c NULL. @n
+    Refer to <a href="http://cunit.sourceforge.net/doc/running_tests.html">CUnit</a> for
+    the list of CUnit interfaces that can be used to inspect test results after test execution.
     @return
     This function returns 1 on success or 0 if test installation or run failed.
     Note that test failure does not issue run failure.
 */
-int cuwProcess(const tCuwContext *context, const tCuwSuiteGetter getters[]);
+int cuwProcess(
+  const tCuwContext *context,
+  const tCuwSuiteGetter getters[],
+  const tCuwPostProcess postProcess
+);
 
 /** @} */
 
