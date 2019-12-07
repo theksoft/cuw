@@ -24,9 +24,11 @@
 
 #include "cuw.h"
 
-#include <stdlib.h>
+typedef struct {
+  const char* title;
+  int (*test)(void);
+} tCuwUTest;
 
-int main(int argc, char *argv[]) {
-  (void)argc; (void)argv;
-  return EXIT_SUCCESS;
-}
+tCuwUTest* getOutputSuite(void);
+tCuwUTest* getArgsSuite(void);
+tCuwUTest* getTestsSuite(void);
