@@ -202,23 +202,24 @@ static void cuwResetStream(FILE *s, char* buf, size_t lm) {
 }
 
 int cuwCheckStream(FILE *s, void (*fProc)(), const char *expected) {
-  if (!s || !fProc || !expected)  return 0;   // Bad arguments
-  size_t ln = strlen(expected);
+  if (!s || !fProc)  return 0;   // Bad arguments
+  size_t ln = (expected && 0 != strlen(expected)) ? strlen(expected) : 1;
   char *buf = cuwBufferStream(s, 2*ln);
   fProc();
-  int rtn = (0 == buf[ln]) && (0 == memcmp(expected, buf, ln) && ln == strlen(buf));
+  int rtn = (expected) ? (0 == buf[ln]) && (0 == memcmp(expected, buf, ln) && ln == strlen(buf)) : (0 == strlen(buf));
   cuwResetStream(s, buf, 2*ln);
   return rtn;
 }
 
 int cuwCheckStdStreams(void (*fProc)(), const char *expectedOut, const char *expectedErr) {
-  if (!fProc || !expectedOut || !expectedErr)  return 0;   // Bad arguments
-  size_t lno = strlen(expectedOut), lne = strlen(expectedErr);
+  if (!fProc)  return 0;   // Bad arguments
+  size_t lno = (expectedOut && 0 != strlen(expectedOut)) ? strlen(expectedOut) : 1,
+         lne = (expectedErr && 0 != strlen(expectedErr)) ? strlen(expectedErr) : 1;
   char *bufo = cuwBufferStream(stdout, 2*lno),
        *bufe = cuwBufferStream(stderr, 2*lne);
   fProc();
-  int rtn = (0 == bufo[lno]) && (0 == memcmp(expectedOut, bufo, lno) && lno == strlen(bufo))
-         && (0 == bufe[lne]) && (0 == memcmp(expectedErr, bufe, lne) && lne == strlen(bufe));
+  int rtn = ((expectedOut) ? (0 == bufo[lno]) && (0 == memcmp(expectedOut, bufo, lno) && lno == strlen(bufo)) : (0 == strlen(bufo)))
+         && ((expectedErr) ? (0 == bufe[lne]) && (0 == memcmp(expectedErr, bufe, lne) && lne == strlen(bufe)) : (0 == strlen(bufe)));
   cuwResetStream(stderr, bufe, 2*lne);
   cuwResetStream(stdout, bufo, 2*lno);
   return rtn;
