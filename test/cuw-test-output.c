@@ -40,6 +40,9 @@
   "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae;\tAliquam nibh.\n " \
   "Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit.\n\t...\n"
 
+static void noPrint(void);
+static int testNoPrint(void);
+
 static void simplePrint(void);
 static void multiLinePrint(void);
 static void simplePrintError(void);
@@ -72,6 +75,7 @@ static int testPrintStrmError2(void);
 
 tCuwUTest* getOutputSuite(void) {
   static tCuwUTest s[] = {
+    { "Check empty printing", testNoPrint },
     { "Print simple characters (stdout)", testSimplePrint },
     { "Print multi-line text (stdout)", testMultiLinePrint },
     { "Detect print error on simple characters (stdout)", testSimplePrintError },
@@ -87,6 +91,15 @@ tCuwUTest* getOutputSuite(void) {
     { NULL, NULL }
   };
   return s;
+}
+
+/* ---------------------------------------------------------------------------------------------- */
+
+static void noPrint(void) {}
+static int testNoPrint(void) {
+  return cuwCheckStream(stdout, noPrint, NULL)
+      && cuwCheckStream(stderr, noPrint, NULL)
+      && cuwCheckStdStreams(noPrint, NULL, NULL);
 }
 
 /* ---------------------------------------------------------------------------------------------- */
