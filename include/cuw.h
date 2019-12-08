@@ -277,9 +277,9 @@ int cuwRunSelected(const tCuwContext* context);
     @{
 */
 
-#define CUW_CHECK_OUTPUT(t, o)      CU_ASSERT(testCheckStdOut((t), (o)))
-#define CUW_CHECK_ERROR(t, e)       CU_ASSERT(testCheckStdErr((t), (e)))
-#define CUW_CHECK_STREAMS(t, o, e)  CU_ASSERT(testCheckStdStreams((t), (o), (e)))
+#define CUW_CHECK_OUTPUT(t, o)      CU_ASSERT(cuwCheckStream(stdout, (t), (o)))
+#define CUW_CHECK_ERROR(t, e)       CU_ASSERT(cuwCheckStream(stderr, (t), (e)))
+#define CUW_CHECK_STREAMS(t, o, e)  CU_ASSERT(cuwCheckStdStreams((t), (o), (e)))
 
 /** Compares a function output to a stream to an expected text string.
     @param[inout]  s
