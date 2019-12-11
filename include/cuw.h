@@ -305,6 +305,28 @@ int cuwCheckStream(FILE* s, void (*fProc)(), const char *expected);
 */
 int cuwCheckStdStreams(void (*fProc)(), const char *expectedOut, const char *expectedErr);
 
+/** Buffers a stream.
+    @param[in] s 
+    Stream to buffer.
+    @param[in] lm
+    Minimal size of the buffer.
+    @return
+    This function returns the allocated buffer used to buffer the stream or @c NULL if an error occurs.
+    @see cuwResetStream()
+*/
+char* cuwBufferStream(FILE *s, size_t lm);
+
+/** Reset the stream buffering.
+    @param[in] s 
+    Buffered stream to reset.
+    @param[in] buf
+    Buffer returned previously returned by cuwBufferStream().
+    @param[in] lm
+    Minimal size of the buffer set for allocation.
+    @see cuwBufferStream()
+*/
+void cuwResetStream(FILE *s, char* buf, size_t lm);
+
 /** @} */
 
 #endif  // CUW_H
