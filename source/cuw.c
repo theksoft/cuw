@@ -180,7 +180,7 @@ int cuwRunAutomated(const char* filename) {
 /* Utils
  *----------------------------------------------------------------------------------------------- */
 
-static char* cuwBufferStream(FILE *s, size_t lm) {
+char* cuwBufferStream(FILE *s, size_t lm) {
   assert(s && lm);
   // Set a buffer with a minimal size of 8192 or a multiple of 8192
   lm >>= 13; lm++; lm <<= 13;
@@ -192,7 +192,7 @@ static char* cuwBufferStream(FILE *s, size_t lm) {
   return buf;
 }
 
-static void cuwResetStream(FILE *s, char* buf, size_t lm) {
+void cuwResetStream(FILE *s, char* buf, size_t lm) {
   assert(s && buf && lm);
   lm >>= 13; lm++; lm <<= 13;
   memset(buf, 0, lm);
