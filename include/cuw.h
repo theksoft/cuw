@@ -28,10 +28,10 @@
   @author Herve Retaureau
   @copyright Copyright (c) 2019
 
-  @example cuw-basic-example.c
+  @example cuw_basic_example.c
   This example shows the use of the very basic CUnit wrapper interface.
 
-  @example cuw-extended-example.c
+  @example cuw_extended_example.c
   This example shows the use of CUnit wrapper internal interface in order to access some customization.
 */
 

@@ -77,8 +77,8 @@ int main(int argc, char *argv[]) {
  *------------------------------------------------------------------------------------------------*
 
 Suite Test suite 2, Test First test of TS2 had failures:
-    1. source/cuw-extended-example.c:143  - cuwCheckOutput(printSomething, "The quick brown fox jumps over the lazy dog!\n")
-    2. source/cuw-extended-example.c:147  - cuwCheckOutput(printSomething, "The quick brown dog jumps over the lazy fox!\n")
+    1. source/cuw_extended_example.c:143  - cuwCheckOutput(printSomething, "The quick brown fox jumps over the lazy dog!\n")
+    2. source/cuw_extended_example.c:147  - cuwCheckOutput(printSomething, "The quick brown dog jumps over the lazy fox!\n")
 
 Run Summary:    Type  Total    Ran Passed Failed Inactive
               suites      2      2    n/a      0        0

@@ -9,6 +9,7 @@
 # -----------------------------------------------------------------------------
 
 PLATFORM ?= linux
+PRFX ?= .
 TGT = cuw
 ifneq "$(PLATFORM)" "win"
   EXE := 
@@ -45,7 +46,7 @@ OBJSD := $(SRC:%=%-g.o)
 
 # Project test file list
 
-SRCT := $(TGT)-test $(TGT)-test-output $(TGT)-test-args $(TGT)-test-tests
+SRCT := $(TGT)_test $(TGT)_test_output $(TGT)_test_args $(TGT)_test_tests
 OBJST := $(SRCT:%=%-g.o)
 
 # Compiler and linker options
@@ -66,16 +67,16 @@ doc: $(DOCD)/html/index.html
 # Project file dependencies
 
 $(OBJD)/$(PLATFORM)/$(TGT).o $(OBJD)/$(PLATFORM)/$(TGT)-g.o: $(TGT).c $(TGT).h
-$(OBJD)/$(PLATFORM)/$(TGT)-test-g.o \
-	$(OBJD)/$(PLATFORM)/$(TGT)-test-output-g.o \
-	$(OBJD)/$(PLATFORM)/$(TGT)-test-args-g.o \
-	$(OBJD)/$(PLATFORM)/$(TGT)-test-tests-g.o: $(TGT)-test.h $(TGT).h
-$(OBJD)/$(PLATFORM)/$(TGT)-test-g.o: $(TGT)-test.c
-$(OBJD)/$(PLATFORM)/$(TGT)-test-output-g.o: $(TGT)-test-output.c
-$(OBJD)/$(PLATFORM)/$(TGT)-test-args-g.o: $(TGT)-test-args.c
-$(OBJD)/$(PLATFORM)/$(TGT)-test-tests-g.o: $(TGT)-test-tests.c
-$(OBJD)/$(PLATFORM)/$(TGT)-basic-example.o: $(TGT)-basic-example.c $(TGT).h
-$(OBJD)/$(PLATFORM)/$(TGT)-extended-example.o: $(TGT)-extended-example.c $(TGT).h
+$(OBJD)/$(PLATFORM)/$(TGT)_test-g.o \
+	$(OBJD)/$(PLATFORM)/$(TGT)_test_output-g.o \
+	$(OBJD)/$(PLATFORM)/$(TGT)_test_args-g.o \
+	$(OBJD)/$(PLATFORM)/$(TGT)_test_tests-g.o: $(TGT)_test.h $(TGT).h
+$(OBJD)/$(PLATFORM)/$(TGT)_test_g.o: $(TGT)_test.c
+$(OBJD)/$(PLATFORM)/$(TGT)_test_output-g.o: $(TGT)_test_output.c
+$(OBJD)/$(PLATFORM)/$(TGT)_test_args-g.o: $(TGT)_test_args.c
+$(OBJD)/$(PLATFORM)/$(TGT)_test_tests-g.o: $(TGT)_test_tests.c
+$(OBJD)/$(PLATFORM)/$(TGT)_basic_example.o: $(TGT)_basic_example.c $(TGT).h
+$(OBJD)/$(PLATFORM)/$(TGT)_extended_example.o: $(TGT)_extended_example.c $(TGT).h
 
 # Project files build rules
 
@@ -108,13 +109,13 @@ $(BIND)/$(PLATFORM)/$(TGT)-test$(EXE): $(OBJST)
 
 $(BIND)/$(PLATFORM)/$(TGT)-basic-example$(EXE) $(BIND)/$(PLATFORM)/$(TGT)-extended-example$(EXE): lib$(TGT).a
 
-$(BIND)/$(PLATFORM)/$(TGT)-basic-example$(EXE): $(TGT)-basic-example.o
+$(BIND)/$(PLATFORM)/$(TGT)-basic-example$(EXE): $(TGT)_basic_example.o
 	@echo ==== Building $@ [$(TGT) basic example application] ====
 	$(CXX) $(LDFLAGS) $(filter %.o,$^) -l $(TGT) -o $@
 	@echo =*_*= Done [$@] =*_*=
 	@echo
 
-$(BIND)/$(PLATFORM)/$(TGT)-extended-example$(EXE): $(TGT)-extended-example.o
+$(BIND)/$(PLATFORM)/$(TGT)-extended-example$(EXE): $(TGT)_extended_example.o
 	@echo ==== Building $@ [$(TGT) extended example application] ====
 	$(CXX) $(LDFLAGS) $(filter %.o,$^) -l $(TGT) -o $@
 	@echo =*_*= Done [$@] =*_*=
@@ -122,7 +123,7 @@ $(BIND)/$(PLATFORM)/$(TGT)-extended-example$(EXE): $(TGT)-extended-example.o
 
 # Documentation
 
-$(DOCD)/html/index.html: $(TGT)-dox.cfg $(TGT).h
+$(DOCD)/html/index.html: $(TGT)_dox.cfg $(TGT).h
 	@echo ==== Building $(TGT) documentation ====
 	doxygen $<
 	@echo =*_*= Done [$@] =*_*=

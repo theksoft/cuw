@@ -18,8 +18,8 @@ CUnit wrapper goal is to reduce the API call for using CUnit in most basic usage
   If more detailed interfacing is needed, you should go directly with CUnit interface.
 
 Two example files are provided:
-+ *cuw-basic-example.c* shows the use of the very basic CUW interface.
-+ *cuw-extended-example.c* shows the use of the more detailed interface with some customization.
++ *cuw_basic_example.c* shows the use of the very basic CUW interface.
++ *cuw_extended_example.c* shows the use of the more detailed interface with some customization.
 
 # Generating libcuw.a
 
@@ -29,7 +29,8 @@ In order to generate a *libcuw.a*, you'll need to have:
 
 # Genrating doxygen documentation
 
-*Doxygen* HTML documentation can be generated using *cuw-dox.cfg* configuration file.
+*Doxygen* HTML documentation can be generated using *cuw_dox.cfg* configuration file.
+*Graphviz* needs to be installed as well.
 
 # Test file organization example
 

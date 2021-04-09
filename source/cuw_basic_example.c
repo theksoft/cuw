@@ -61,8 +61,8 @@ Suite: Test suite #1
   Test: TS#1 - Test #2 ...passed
 Suite: Test suite 2
   Test: First test of TS2 ...FAILED
-    1. source/cuw-basic-example.c:125  - cuwCheckOutput(printSomething, "The quick brown fox jumps over the lazy dog!\n")
-    2. source/cuw-basic-example.c:129  - cuwCheckOutput(printSomething, "The quick brown dog jumps over the lazy fox!\n")
+    1. source/cuw_basic_example.c:125  - cuwCheckOutput(printSomething, "The quick brown fox jumps over the lazy dog!\n")
+    2. source/cuw_basic_example.c:129  - cuwCheckOutput(printSomething, "The quick brown dog jumps over the lazy fox!\n")
 
 Run Summary:    Type  Total    Ran Passed Failed Inactive
               suites      2      2    n/a      0        0
