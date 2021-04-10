@@ -22,7 +22,7 @@
   SOFTWARE.
 */
 
-#include "cuw-test.h"
+#include "cuw_test.h"
 
 #undef CUW_CAN_CHECK_CUNIT_OUT
 
@@ -56,7 +56,7 @@ tCuwUTest* getTestsSuite(void) {
   "     http://cunit.sourceforge.net/\n\n\n" \
   "Suite: Test suite #1\n" \
   "  Test: TS#1 - Test #1 ...FAILED\n" \
-  "    1. test/cuw-test-tests.c:68  - 3 == myAddition(2, 2)\n" \
+  "    1. test/cuw_test_tests.c:68  - 3 == myAddition(2, 2)\n" \
   "  Test: TS#1 - Test #2 ...passed\n" \
   "Suite: Test suite 2\n" \
   "  Test: First test of TS2 ...passed\n\n" \
@@ -215,7 +215,7 @@ static tCuwSuite *getTS2() {
     "        <CUNIT_RUN_TEST_RECORD> \n" \
     "          <CUNIT_RUN_TEST_FAILURE> \n" \
     "            <TEST_NAME> TS#1 - Test #1 </TEST_NAME> \n" \
-    "            <FILE_NAME> test/cuw-test-tests.c </FILE_NAME> \n" \
+    "            <FILE_NAME> test/cuw_test_tests.c </FILE_NAME> \n" \
     "            <LINE_NUMBER> 150 </LINE_NUMBER> \n" \
     "            <CONDITION> 3 == myAddition(2, 2) </CONDITION> \n" \
     "          </CUNIT_RUN_TEST_FAILURE> \n" \

@@ -43,31 +43,47 @@ tCuwSuite* getTS2();
 static tCuwSuiteGetter tests[] = { getTS1, getTS2, CUW_SUITE_END };
 
 int main(int argc, char *argv[]) {
-  int e = 0;
+
+  int help = 0;
   tCuwContext c;
-  if (0 != (e = cuwGetContext(&c, argc, argv)))
-    return (1 == e) ? EXIT_SUCCESS : EXIT_FAILURE;
-  if (!cuwProcess(&c, tests, NULL))
+  if (!cuwParseArgs(&c, &help, argc, argv) || help) {
+    cuwUsage(argv[0]);
+    return (help) ? EXIT_SUCCESS : EXIT_FAILURE;
+  }
+
+  // Limit options
+  if (CUW_MODE_BASIC != c.mode) {
+    fprintf(stderr, "Only basic mode is supported!");
     return EXIT_FAILURE;
+  }
+  c.bm = CU_BRM_NORMAL;
+
+  if (!cuwInitializeRegistry()) {
+    fprintf(stderr, "ERROR(%d) %s\n", cuwGetError(), cuwGetErrorMessage());
+    return EXIT_FAILURE;
+  }
+
+  // Run directly basic mode
+  if ( !cuwCreateTests(tests) || !cuwRunBasic(c.bm)) {
+    cuwCleanupRegistry();
+    fprintf(stderr, "ERROR(%d) %s\n", cuwGetError(), cuwGetErrorMessage());
+    return EXIT_FAILURE;
+  }
+  cuwCleanupRegistry();
   return EXIT_SUCCESS;
 }
 
 /* Screen result should be as follow
  *------------------------------------------------------------------------------------------------*
 
-Suite: Test suite #1
-  Test: TS#1 - Test #1 ...FAILED
-    1. source/cuw-basic-example.c:94  - 3 == myAddition(2, 2)
-  Test: TS#1 - Test #2 ...passed
-Suite: Test suite 2
-  Test: First test of TS2 ...FAILED
-    1. source/cuw-basic-example.c:125  - cuwCheckOutput(printSomething, "The quick brown fox jumps over the lazy dog!\n")
-    2. source/cuw-basic-example.c:129  - cuwCheckOutput(printSomething, "The quick brown dog jumps over the lazy fox!\n")
+Suite Test suite 2, Test First test of TS2 had failures:
+    1. source/cuw_extended_example.c:143  - cuwCheckOutput(printSomething, "The quick brown fox jumps over the lazy dog!\n")
+    2. source/cuw_extended_example.c:147  - cuwCheckOutput(printSomething, "The quick brown dog jumps over the lazy fox!\n")
 
 Run Summary:    Type  Total    Ran Passed Failed Inactive
               suites      2      2    n/a      0        0
-               tests      3      3      1      2        0
-             asserts      9      9      6      3      n/a
+               tests      3      3      2      1        0
+             asserts      9      9      7      2      n/a
 
  *------------------------------------------------------------------------------------------------*/
 
@@ -91,7 +107,7 @@ void printSomething() {
 
 static void test11(void) {
   CU_ASSERT(2 == myAddition(1, 1));
-  CU_ASSERT(3 == myAddition(2, 2));   // Just to have some test failed reported
+  CU_ASSERT(4 == myAddition(2, 2));
   CU_ASSERT(5 == myAddition(2, 3));
 }
 
