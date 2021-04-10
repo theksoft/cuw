@@ -22,7 +22,7 @@
   SOFTWARE.
 */
 
-#include "cuw-test.h"
+#include "cuw_test.h"
 
 #include <stdlib.h>
 #include <stdio.h>
