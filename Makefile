@@ -9,7 +9,6 @@
 # -----------------------------------------------------------------------------
 
 PLATFORM ?= linux
-PRFX ?= .
 TGT = cuw
 ifneq "$(PLATFORM)" "win"
   EXE := 
@@ -20,11 +19,13 @@ endif
 # Project directory management
 # Include header & source directories as well as temporary build directories.
 
+ROOTD ?= $(CURDIR)
+
 INCD := include
 SRCD := source
-OBJD := obj
-LIBD := lib
-BIND := bin
+OBJD := $(ROOTD)/obj
+LIBD := $(ROOTD)/lib
+BIND := $(ROOTD)/bin
 TSTD := test
 DOCD := doc
 
