@@ -19,14 +19,14 @@ endif
 # Project directory management
 # Include header & source directories as well as temporary build directories.
 
-ROOTD ?= $(CURDIR)
-
 INCD := include
 SRCD := source
-OBJD := $(ROOTD)/obj
-LIBD := $(ROOTD)/lib
-BIND := $(ROOTD)/bin
 TSTD := test
+
+BUILD ?= build/$(PLATFORM)
+OBJD ?= $(BUILD)/obj
+LIBD ?= $(BUILD)/lib
+BIND ?= $(BUILD)/bin
 DOCD := doc
 
 DIRS := $(OBJD) $(LIBD) $(BIND)
@@ -35,9 +35,9 @@ vpath %.h $(INCD):$(SRCD):$(TSTD)
 vpath %.hpp $(INCD):$(SRCD):$(TSTD)
 vpath %.cpp $(SRCD):$(TSTD)
 vpath %.c $(SRCD):$(TSTD)
-vpath %.o $(OBJD)/$(PLATFORM)
-vpath %.a $(LIBD)/$(PLATFORM)
-vpath %$(EXE) $(BIND)/$(PLATFORM)
+vpath %.o $(OBJD)
+vpath %.a $(LIBD)
+vpath %$(EXE) $(BIND)
 
 # Project source file list
 
@@ -56,7 +56,8 @@ INCLUDES := $(INCD)
 
 CFLAGS := -Wall -Wextra -Werror -Wpedantic -pedantic-errors -fPIC
 ARFLAGS := rcs
-LDFLAGS := -fPIC -l cunit -L $(LIBD)/$(PLATFORM)
+LDFLAGS := -fPIC
+LIBFLAGS :=  -l cunit -L $(LIBD)
 
 # Main label
 
@@ -65,60 +66,71 @@ tst: dirs $(TGT)-test$(EXE)
 xmp: dirs $(TGT)-basic-example$(EXE) $(TGT)-extended-example$(EXE)
 doc: $(DOCD)/html/index.html
 
+# Install label
+
+PRFX ?= .
+
+install: all doc
+	cp $(LIBD)/lib$(TGT).a $(PRFX)/lib/
+	cp $(INCD)/$(TGT).h $(PRFX)/include/
+	@-mkdir -p $(PRFX)/doc/$(TGT)
+	@-$(RM) -r $(PRFX)/doc/$(TGT)/*
+	cp -rf $(DOCD)/* $(PRFX)/doc/$(TGT)/
+
 # Project file dependencies
 
-$(OBJD)/$(PLATFORM)/$(TGT).o $(OBJD)/$(PLATFORM)/$(TGT)-g.o: $(TGT).c $(TGT).h
-$(OBJD)/$(PLATFORM)/$(TGT)_test-g.o \
-	$(OBJD)/$(PLATFORM)/$(TGT)_test_output-g.o \
-	$(OBJD)/$(PLATFORM)/$(TGT)_test_args-g.o \
-	$(OBJD)/$(PLATFORM)/$(TGT)_test_tests-g.o: $(TGT)_test.h $(TGT).h
-$(OBJD)/$(PLATFORM)/$(TGT)_test_g.o: $(TGT)_test.c
-$(OBJD)/$(PLATFORM)/$(TGT)_test_output-g.o: $(TGT)_test_output.c
-$(OBJD)/$(PLATFORM)/$(TGT)_test_args-g.o: $(TGT)_test_args.c
-$(OBJD)/$(PLATFORM)/$(TGT)_test_tests-g.o: $(TGT)_test_tests.c
-$(OBJD)/$(PLATFORM)/$(TGT)_basic_example.o: $(TGT)_basic_example.c $(TGT).h
-$(OBJD)/$(PLATFORM)/$(TGT)_extended_example.o: $(TGT)_extended_example.c $(TGT).h
+$(OBJD)/$(TGT).o $(OBJD)/$(TGT)-g.o: $(TGT).c $(TGT).h
+$(OBJD)/$(TGT)_test-g.o \
+	$(OBJD)/$(TGT)_test_output-g.o \
+	$(OBJD)/$(TGT)_test_args-g.o \
+	$(OBJD)/$(TGT)_test_tests-g.o: $(TGT)_test.h $(TGT).h
+$(OBJD)/$(TGT)_test_g.o: $(TGT)_test.c
+$(OBJD)/$(TGT)_test_output-g.o: $(TGT)_test_output.c
+$(OBJD)/$(TGT)_test_args-g.o: $(TGT)_test_args.c
+$(OBJD)/$(TGT)_test_tests-g.o: $(TGT)_test_tests.c
+$(OBJD)/$(TGT)_basic_example.o: $(TGT)_basic_example.c $(TGT).h
+$(OBJD)/$(TGT)_extended_example.o: $(TGT)_extended_example.c $(TGT).h
 
 # Project files build rules
 
-$(OBJD)/$(PLATFORM)/%.o: %.c
+$(OBJD)/%.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES:%=-I %) -o2 -c $< -o $@
 
-$(OBJD)/$(PLATFORM)/%-g.o: %.c
+$(OBJD)/%-g.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES:%=-I %) -Itest -D_DEBUG -g -o0 -c $< -o $@
 
 # Project targets build
 
-$(LIBD)/$(PLATFORM)/lib$(TGT).a: $(OBJS)
+$(LIBD)/lib$(TGT).a: $(OBJS)
 	@echo ==== Building $@ [lib$(TGT)] ====
 	$(AR) $(ARFLAGS) $@ $^
 	@echo =*_*= Done [$@] =*_*=
 	@echo
 
-$(LIBD)/$(PLATFORM)/lib$(TGT)d.a: $(OBJSD)
+$(LIBD)/lib$(TGT)d.a: $(OBJSD)
 	@echo ==== Building $@ [lib$(TGT)] ====
 	$(AR) $(ARFLAGS) $@ $^
 	@echo =*_*= Done [$@] =*_*=
 	@echo
 
-$(BIND)/$(PLATFORM)/$(TGT)-test$(EXE): lib$(TGT)d.a
-$(BIND)/$(PLATFORM)/$(TGT)-test$(EXE): $(OBJST)
+$(BIND)/$(TGT)-test$(EXE): lib$(TGT)d.a
+$(BIND)/$(TGT)-test$(EXE): $(OBJST)
 	@echo ==== Building $@ [$(TGT) test application] ====
-	$(CXX) $(LDFLAGS) $(filter %.o,$^) -l $(TGT)d -o $@
+	$(CXX) $(LDFLAGS) $(filter %.o,$^) -l $(TGT)d $(LIBFLAGS) -o $@
 	@echo =*_*= Done [$@] =*_*=
 	@echo
 
-$(BIND)/$(PLATFORM)/$(TGT)-basic-example$(EXE) $(BIND)/$(PLATFORM)/$(TGT)-extended-example$(EXE): lib$(TGT).a
+$(BIND)/$(TGT)-basic-example$(EXE) $(BIND)/$(TGT)-extended-example$(EXE): lib$(TGT).a
 
-$(BIND)/$(PLATFORM)/$(TGT)-basic-example$(EXE): $(TGT)_basic_example.o
+$(BIND)/$(TGT)-basic-example$(EXE): $(TGT)_basic_example.o
 	@echo ==== Building $@ [$(TGT) basic example application] ====
-	$(CXX) $(LDFLAGS) $(filter %.o,$^) -l $(TGT) -o $@
+	$(CXX) $(LDFLAGS) $(filter %.o,$^) -l $(TGT) $(LIBFLAGS) -o $@
 	@echo =*_*= Done [$@] =*_*=
 	@echo
 
-$(BIND)/$(PLATFORM)/$(TGT)-extended-example$(EXE): $(TGT)_extended_example.o
+$(BIND)/$(TGT)-extended-example$(EXE): $(TGT)_extended_example.o
 	@echo ==== Building $@ [$(TGT) extended example application] ====
-	$(CXX) $(LDFLAGS) $(filter %.o,$^) -l $(TGT) -o $@
+	$(CXX) $(LDFLAGS) $(filter %.o,$^) -l $(TGT) $(LIBFLAGS) -o $@
 	@echo =*_*= Done [$@] =*_*=
 	@echo
 
@@ -132,14 +144,14 @@ $(DOCD)/html/index.html: $(TGT)_dox.cfg $(TGT).h
 
 # Other project management label
 
-dirs: $(DIRS:%=%/$(PLATFORM))
-$(DIRS:%=%/$(PLATFORM)):
+dirs: $(DIRS)
+$(DIRS):
 	@for dir in $(DIRS); do \
-	  mkdir -p $$dir/$(PLATFORM); \
+	  mkdir -p $$dir; \
 	done
 
 clean:
-	@$(RM) $(foreach dir,$(DIRS),$(dir)/$(PLATFORM)/*)
+	@$(RM) $(foreach dir,$(DIRS),$(dir)/*)
 	@$(RM) -r $(DOCD)/*
 
 cleanall:
