@@ -50,6 +50,10 @@ OBJSD := $(SRC:%=%-g.o)
 SRCT := $(TGT)_test $(TGT)_test_output $(TGT)_test_args $(TGT)_test_tests
 OBJST := $(SRCT:%=%-g.o)
 
+# Project example file list
+
+SRCX := $(TGT)_basic_example $(TGT)_extended_example
+
 # Compiler and linker options
 
 INCLUDES := $(INCD)
@@ -57,7 +61,7 @@ INCLUDES := $(INCD)
 CFLAGS := -Wall -Wextra -Werror -Wpedantic -pedantic-errors -fPIC
 ARFLAGS := rcs
 LDFLAGS := -fPIC
-LIBFLAGS :=  -l cunit -L $(LIBD)
+LIBFLAGS := -l cunit -L $(LIBD)
 
 # Main label
 
@@ -79,17 +83,14 @@ install: all doc
 
 # Project file dependencies
 
-$(OBJD)/$(TGT).o $(OBJD)/$(TGT)-g.o: $(TGT).c $(TGT).h
-$(OBJD)/$(TGT)_test-g.o \
-	$(OBJD)/$(TGT)_test_output-g.o \
-	$(OBJD)/$(TGT)_test_args-g.o \
-	$(OBJD)/$(TGT)_test_tests-g.o: $(TGT)_test.h $(TGT).h
-$(OBJD)/$(TGT)_test_g.o: $(TGT)_test.c
-$(OBJD)/$(TGT)_test_output-g.o: $(TGT)_test_output.c
-$(OBJD)/$(TGT)_test_args-g.o: $(TGT)_test_args.c
-$(OBJD)/$(TGT)_test_tests-g.o: $(TGT)_test_tests.c
-$(OBJD)/$(TGT)_basic_example.o: $(TGT)_basic_example.c $(TGT).h
-$(OBJD)/$(TGT)_extended_example.o: $(TGT)_extended_example.c $(TGT).h
+DEPD := $(OBJD)/dep
+DEPS := $(SRC:%=$(DEPD)/%.d) $(SRCT:%=$(DEPD)/%.d) $(SRCX:%=$(DEPD)/%.d)
+
+$(DEPD)/%.d: %.c | $(DEPD)
+	@$(CC) -MM -MP -MT $(OBJD)/$(basename $(<F)).o -MT $(OBJD)/$(basename $(<F))-g.o $(CFLAGS) $(INCLUDES:%=-I %) -Itest $< > $@
+
+$(DEPD):
+	@mkdir -p $@
 
 # Project files build rules
 
@@ -151,10 +152,14 @@ $(DIRS):
 	done
 
 clean:
-	@$(RM) $(foreach dir,$(DIRS),$(dir)/*)
-	@$(RM) -r $(DOCD)/*
+	-@$(RM) $(foreach dir,$(DIRS),$(dir)/*)
+	-@$(RM) $(DEPS)
+	-@$(RM) -r $(DOCD)/*
 
 cleanall:
-	@$(RM) -r $(DIRS) $(DOCD)
+	@$(RM) -rf $(DEPD)
+	@$(RM) -rf $(DIRS) $(DOCD)
 
 .PHONY: all tst xmp doc dirs clean cleanall
+
+-include $(DEPS)
